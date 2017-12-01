@@ -16,23 +16,49 @@ fn main() {
         .expect("A number must be inputted");
 
     // Split the number into its digits
-    let digits: Vec<u8> = number.chars()
-        .map(|digit| digit.to_digit(10).expect("Digits should be ascii!") as u8)
+    let mut digits: Vec<u8> = number
+        .chars()
+        .map(|digit| {
+            digit.to_digit(10).expect("Digits should be ascii!") as u8
+        })
         .collect();
 
-    // Add the number to the total if it is equal to the next number
+    println!("Answer: {}", calculate(&mut digits))
+}
+
+fn calculate(digits: &mut Vec<u8>) -> u64 {
     let mut next_digits = digits.clone();
     next_digits.rotate(1);
 
-    let answer = digits.iter()
-        .zip(next_digits)
-        .fold(0u64, |acc, (&num, next)| {
-            if num == next {
-                acc + num as u64
-            } else {
-                acc
-            }
-        });
+    // Add the number to the total if it is equal to the next number
+    digits.iter().zip(next_digits).fold(
+        0u64,
+        |acc, (&num, next)| if num ==
+            next
+        {
+            acc + num as u64
+        } else {
+            acc
+        },
+    )
+}
 
-    println!("Answer: {}", answer)
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn check_provided_test_cases() {
+
+        // Tuple of (digits, answer)
+        let test_cases = [
+            (vec![1, 1, 2, 2], 3),
+            (vec![1, 1, 1, 1], 4),
+            (vec![1, 2, 3, 4], 0),
+            (vec![9, 1, 2, 1, 2, 1, 2, 9], 9),
+        ];
+
+        for &(ref digits, answer) in test_cases.into_iter() {
+            assert_eq!(answer, calculate(&mut digits.to_vec()));
+        }
+    }
 }
