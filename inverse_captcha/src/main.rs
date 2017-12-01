@@ -1,13 +1,12 @@
 //! A solver for the [Day 1 Inverse Captcha problem](http://adventofcode.com/2017/day/1)
 
 #![feature(slice_rotate)]
+#![feature(test)]
 
 #[macro_use]
 extern crate scan_rules;
-extern crate rayon;
 
 use scan_rules::scanner::Number;
-use rayon::prelude::*;
 
 fn main() {
 
@@ -19,7 +18,7 @@ fn main() {
 
     // Split the number into its digits
     let mut digits: Vec<u8> = number
-        .par_chars()
+        .chars()
         .map(|digit| {
             digit.to_digit(10).expect("Digits should be ascii!") as u8
         })
@@ -34,21 +33,23 @@ fn calculate(digits: &mut Vec<u8>) -> u64 {
 
     // Add the number to the total if it is equal to the next number
     digits
-        .par_iter()
+        .iter()
         .zip(next_digits)
-        .fold(|| 0u64, |acc, (&num, next)| {
+        .fold(/*||*/ 0u64, |acc, (&num, next)| {
             if num == next {
                     acc + num as u64
             } else {
                 acc
             }
         })
-        .sum()
 }
 
 #[cfg(test)]
 mod tests {
+    extern crate test;
+
     use super::*;
+    use self::test::Bencher;
 
     #[test]
     fn check_provided_test_cases() {
@@ -64,5 +65,25 @@ mod tests {
         for &(ref digits, answer) in test_cases.into_iter() {
             assert_eq!(answer, calculate(&mut digits.to_vec()));
         }
+    }
+
+
+    #[bench]
+    fn benchmark(bencher: &mut Bencher) {
+        bencher.iter(|| {
+            let number = test::black_box(
+                "1223497932759202301294722475021475739208".to_string()
+            );
+
+            // Split the number into its digits
+            let mut digits: Vec<u8> = number
+                .chars()
+                .map(|digit| {
+                    digit.to_digit(10).expect("Digits should be ascii!") as u8
+                })
+                .collect();
+
+            calculate(&mut digits);
+        })
     }
 }
