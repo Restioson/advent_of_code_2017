@@ -35,7 +35,7 @@ fn calculate(digits: &mut Vec<u8>) -> u64 {
     digits
         .iter()
         .zip(next_digits)
-        .fold(/*||*/ 0u64, |acc, (&num, next)| {
+        .fold(0u64, |acc, (&num, next)| {
             if num == next {
                     acc + num as u64
             } else {
