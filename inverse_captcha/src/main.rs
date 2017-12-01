@@ -31,16 +31,16 @@ fn calculate(digits: &mut Vec<u8>) -> u64 {
     next_digits.rotate(1);
 
     // Add the number to the total if it is equal to the next number
-    digits.iter().zip(next_digits).fold(
-        0u64,
-        |acc, (&num, next)| if num ==
-            next
-        {
-            acc + num as u64
-        } else {
-            acc
-        },
-    )
+    digits
+        .iter()
+        .zip(next_digits)
+        .fold(0u64, |acc, (&num, next)| {
+            if num == next {
+                    acc + num as u64
+            } else {
+                acc
+            }
+        })
 }
 
 #[cfg(test)]
