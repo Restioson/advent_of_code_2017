@@ -5,3 +5,4 @@ authors = ["restioson <restiosondev@gmail.com>"]
 
 [dependencies]
 scan-rules = "0.2.0"
+rayon = "0.9"
